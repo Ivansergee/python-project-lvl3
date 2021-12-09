@@ -1,0 +1,43 @@
+name: test-cov
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          pip install flake8
+          pip install pytest
+          pip install pytest-cov
+          make install
+      - name: Lint with flake8
+        run: |
+          make lint
+      - name: Test with pytest
+        run: |
+          make test
+          
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: 64d7a2a8102e57fa2ab3d676be7951d3ed3d663b80588fa3b1a0be958c335195
+        with:
+          coverageCommand: make test
+          debug: true
