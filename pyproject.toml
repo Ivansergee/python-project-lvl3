@@ -1,16 +1,23 @@
 [tool.poetry]
-name = "loader"
+name = "hexlet-code"
 version = "0.1.0"
 description = ""
 authors = ["ivan klimentev <klimentievis@inbox.ru>"]
+packages = [
+    { include = "page_loader" },
+]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 flake8 = "^4.0.1"
 requests = "^2.26.0"
+requests-mock = "^1.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+
+[tool.poetry.scripts]
+page-loader = "page_loader.scripts.loader:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -2,10 +2,10 @@ install:
 	poetry install
 
 test:
-	poetry run pytest --cov=tests --cov-report xml
+	poetry run pytest
 
 lint:
-	poetry run flake8 gendiff
+	poetry run flake8 page_loader
 
 selfcheck:
 	poetry check
