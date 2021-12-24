@@ -1,5 +1,5 @@
 import requests
-from urllib.parse import urljoin
+from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 import os
 import re
@@ -9,29 +9,49 @@ def download(output, url):
     if not os.path.exists(output):
         return 'Directory does not exist'
 
-    r = requests.get(url)
-    basename = re.sub(r'\W', '-', re.split('//', r.url.rstrip('/'))[1])
+    html = requests.get(url).text
+    host = urlparse(url).netloc
+    basename = convert_url(url)
     html_name = basename + '.html'
-    assets_dir = basename + '_files'
     html_path = os.path.join(output, html_name)
-    assets_path = os.path.join(output, assets_dir)
 
+    assets_dir = basename + '_files'
+    assets_path = os.path.join(output, assets_dir)
     if not os.path.exists(assets_path):
         os.mkdir(assets_path)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    for img in soup.find_all('img'):
-        img_url = urljoin(url, img.get('src'))
-        img_content = requests.get(img_url).content
-        img_name = re.sub(
-            r'\W',
-            '-',
-            re.split('//', os.path.splitext(img_url.rstrip('/'))[0])[1]
-        ) + '.png'
-        img_path = os.path.join(assets_path, img_name)
-        img['src'] = os.path.join(assets_dir, img_name)
-        with open(img_path, 'wb') as f:
-            f.write(img_content)
+
+    soup = BeautifulSoup(html, 'html.parser')
+    for asset in soup.find_all(['img', 'link', 'script']):
+        if 'src' in asset.attrs:
+            attr = 'src'
+        else:
+            attr = 'href'
+        asset_url = urljoin(url, asset.get(attr))
+        if urlparse(asset_url).netloc == host:
+            asset_name = convert_url(asset_url)
+            asset_path = os.path.join(assets_path, asset_name)
+            data = requests.get(asset_url).content
+            save_file(asset_path, data)
+            asset[attr] = os.path.join(assets_dir, asset_name)
 
     with open(html_path, 'w') as f:
         f.write(soup.prettify())
+
     return html_path
+
+
+def convert_url(url):
+    no_scheme = url.replace(urlparse(url).scheme + '://', '')
+    root, ext = os.path.splitext(no_scheme)
+    if ext and not ext.startswith('.htm'):
+        return re.sub(r'\W', '-', root) + ext
+    return re.sub(r'\W', '-', root)
+
+
+def parse_html(html, tag, attr):
+    pass
+
+
+def save_file(path, data):
+    with open(path, 'wb') as f:
+        f.write(data)
