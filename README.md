@@ -10,3 +10,6 @@ Download HTML:
 
 Download page with images:
 [![asciicast](https://asciinema.org/a/J8UEfvtxeerbbuS74NImcRxuc.svg)](https://asciinema.org/a/J8UEfvtxeerbbuS74NImcRxuc)
+
+Download assets:
+[![asciicast](https://asciinema.org/a/3DrbtrMfCtDZIcrTsRcTr8n4h.svg)](https://asciinema.org/a/3DrbtrMfCtDZIcrTsRcTr8n4h)
