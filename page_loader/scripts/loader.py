@@ -1,21 +1,43 @@
-from page_loader import download
-
 import argparse
-import os
+from page_loader.engine import download, WD, AppError
+import logging.config
+import logging
+from page_loader.settings_log import logger_config
+import sys
+
+logging.config.dictConfig(logger_config)
+
+logger = logging.getLogger('app_logger')
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Download web-page')
+    # positional arguments
+    parser = argparse.ArgumentParser(description='Page loader')
+    parser.add_argument('url', type=str)
+
+    # optional arguments
     parser.add_argument(
         '-o', '--output',
-        default=f'{os.getcwd()}',
-        help='set path to download (default: current directory)',
-        type=str
+        default=WD,
+        help='output dir (default: working dir)'
     )
-    parser.add_argument('page_url', type=str)
-
     args = parser.parse_args()
-    print(download(args.output, args.page_url))
+
+    try:
+        file_path = download(
+            args.url,
+            args.output
+        )
+    except AppError as e:
+        logger.error(e)
+        print(e)
+        sys.exit(1)
+    except Exception as e:
+        logger.error(f'Unknown error: {e}')
+        sys.exit(1)
+    else:
+        print(f"Page was successfuly downloaded into '{file_path}'")  # noqa E501
+        sys.exit(0)
 
 
 if __name__ == '__main__':

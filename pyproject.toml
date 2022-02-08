@@ -4,21 +4,26 @@ version = "0.1.0"
 description = ""
 authors = ["ivan klimentev <klimentievis@inbox.ru>"]
 packages = [
-    { include = "page_loader" },
+  { include = "page_loader" },
 ]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-flake8 = "^4.0.1"
 requests = "^2.26.0"
-requests-mock = "^1.9.3"
 beautifulsoup4 = "^4.10.0"
+progress = "^1.6"
+colorama = "^0.4.4"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^6.2.5"
+flake8 = "^4.0.1"
+mypy = "^0.910"
+pytest-cov = "^3.0.0"
+requests-mock = "^1.9.3"
+types-requests = "^2.25.10"
 
 [tool.poetry.scripts]
-page-loader = "page_loader.scripts.loader:main"
+page-loader = "page_loader.scripts.page_loader:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
